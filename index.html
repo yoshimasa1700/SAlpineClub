@@ -7,19 +7,23 @@
 <meta name="description" content="日本アルプス主要山小屋の2026年予約開始日を山域別に一覧化。検索、山域フィルタ、受付方法フィルタ付きで素早く確認できます。">
 <style>
   :root {
-    --bg: #f4f7f4;
-    --panel: rgba(255, 255, 255, 0.88);
-    --panel-strong: #ffffff;
-    --text: #17231c;
-    --muted: #607067;
-    --border: rgba(23, 35, 28, 0.1);
-    --shadow: 0 20px 50px rgba(24, 42, 31, 0.08);
-    --green: #295c43;
-    --green-soft: #e7f2eb;
-    --amber: #9b5c0d;
-    --amber-soft: #fff2dd;
-    --blue: #1d5fa7;
-    --blue-soft: #e7f0fb;
+    --bg: #eef2eb;
+    --panel: rgba(250, 248, 243, 0.88);
+    --panel-strong: #fcfaf5;
+    --text: #1f2a22;
+    --muted: #667267;
+    --border: rgba(42, 52, 45, 0.12);
+    --shadow: 0 22px 55px rgba(25, 35, 29, 0.12);
+    --green: #355c47;
+    --green-soft: #e5eee8;
+    --amber: #9f6330;
+    --amber-soft: #f8ead8;
+    --blue: #355f7a;
+    --blue-soft: #e5eef5;
+    --ridge: #607565;
+    --ridge-deep: #3b4d41;
+    --sunrise: #d98258;
+    --sunrise-soft: #f5d4bc;
     --radius-xl: 24px;
     --radius-lg: 18px;
     --radius-md: 12px;
@@ -35,10 +39,23 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     color: var(--text);
     background:
-      radial-gradient(circle at top left, rgba(85, 140, 108, 0.18), transparent 28%),
-      radial-gradient(circle at top right, rgba(29, 95, 167, 0.12), transparent 24%),
-      linear-gradient(180deg, #eef4ef 0%, var(--bg) 100%);
+      radial-gradient(circle at top left, rgba(217, 130, 88, 0.18), transparent 24%),
+      radial-gradient(circle at top right, rgba(96, 117, 101, 0.16), transparent 28%),
+      linear-gradient(180deg, #f2efe7 0%, #edf2ea 42%, var(--bg) 100%);
     line-height: 1.6;
+    position: relative;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: auto 0 0 0;
+    height: 180px;
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(59, 77, 65, 0.04) 100%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 220' preserveAspectRatio='none'%3E%3Cpath fill='%23607565' fill-opacity='0.13' d='M0 176l90-44 65 20 92-78 91 70 119-91 84 63 85-29 94 67 84-77 94 32 108-67 123 104 111-28V220H0Z'/%3E%3Cpath fill='%233b4d41' fill-opacity='0.12' d='M0 191l86-18 98-82 83 48 93-40 102 75 93-86 100 31 82 54 89-36 88 59 111-73 102 68 113-33V220H0Z'/%3E%3C/svg%3E") center bottom / cover no-repeat;
+    pointer-events: none;
+    z-index: 0;
   }
 
   a {
@@ -58,19 +75,47 @@
   }
 
   .page {
+    position: relative;
+    z-index: 1;
     width: min(1160px, calc(100% - 32px));
     margin: 0 auto;
-    padding: 40px 0 56px;
+    padding: 40px 0 72px;
   }
 
   .hero {
-    background: linear-gradient(135deg, rgba(255,255,255,0.93), rgba(245,250,246,0.9));
-    border: 1px solid rgba(255,255,255,0.8);
+    position: relative;
+    overflow: hidden;
+    background:
+      linear-gradient(180deg, rgba(255,244,232,0.92) 0%, rgba(245,248,240,0.88) 44%, rgba(237,242,234,0.92) 100%),
+      linear-gradient(135deg, rgba(255,255,255,0.72), rgba(245,250,246,0.64));
+    border: 1px solid rgba(255,255,255,0.78);
     box-shadow: var(--shadow);
     border-radius: 30px;
-    padding: 34px 32px 30px;
+    padding: 38px 32px 34px;
     backdrop-filter: blur(10px);
     margin-bottom: 22px;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 150px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 220' preserveAspectRatio='none'%3E%3Cpath fill='%2396a996' fill-opacity='0.24' d='M0 187l102-56 98 38 112-101 95 66 120-86 95 53 102-59 94 82 99-43 87 48 96-72V220H0Z'/%3E%3Cpath fill='%23546a58' fill-opacity='0.28' d='M0 203l95-27 107-84 102 55 92-41 119 78 93-75 111 34 98 61 97-35 86 51 100-67V220H0Z'/%3E%3C/svg%3E") center bottom / cover no-repeat;
+    opacity: 0.95;
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: 34px;
+    top: 26px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(217,130,88,0.24) 0%, rgba(217,130,88,0.12) 38%, rgba(217,130,88,0) 72%);
+    pointer-events: none;
   }
 
   .eyebrow {
@@ -78,8 +123,9 @@
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
-    background: var(--green-soft);
-    color: var(--green);
+    background: rgba(255, 248, 240, 0.88);
+    color: var(--ridge-deep);
+    border: 1px solid rgba(159, 99, 48, 0.16);
     border-radius: var(--radius-sm);
     font-size: 13px;
     font-weight: 700;
@@ -110,11 +156,11 @@
 
   .hero-note {
     padding: 10px 14px;
-    background: rgba(255,255,255,0.72);
-    border: 1px solid var(--border);
+    background: rgba(252,248,241,0.78);
+    border: 1px solid rgba(84, 106, 88, 0.12);
     border-radius: var(--radius-sm);
     font-size: 13px;
-    color: #435148;
+    color: #49584c;
   }
 
   .stats {
@@ -125,11 +171,11 @@
   }
 
   .stat-card {
-    background: var(--panel);
+    background: linear-gradient(180deg, rgba(252,249,243,0.92) 0%, rgba(245,248,241,0.84) 100%);
     border: 1px solid rgba(255,255,255,0.7);
     border-radius: var(--radius-lg);
     padding: 18px 18px 16px;
-    box-shadow: 0 10px 30px rgba(24, 42, 31, 0.06);
+    box-shadow: 0 10px 30px rgba(24, 42, 31, 0.08);
     backdrop-filter: blur(8px);
   }
 
@@ -146,7 +192,7 @@
   }
 
   .panel {
-    background: var(--panel);
+    background: linear-gradient(180deg, rgba(252,249,244,0.9) 0%, rgba(248,250,246,0.88) 100%);
     border: 1px solid rgba(255,255,255,0.72);
     border-radius: var(--radius-xl);
     padding: 20px;
@@ -217,11 +263,11 @@
 
   .table-head {
     padding: 14px 18px;
-    background: linear-gradient(180deg, #f7faf8 0%, #eef5f0 100%);
+    background: linear-gradient(180deg, #eef2e7 0%, #e4ebdf 100%);
     border-bottom: 1px solid var(--border);
     font-size: 12px;
     font-weight: 800;
-    color: var(--muted);
+    color: #5a675d;
     letter-spacing: 0.04em;
   }
 
@@ -231,7 +277,7 @@
   }
 
   .row:nth-child(even) {
-    background: rgba(244, 247, 244, 0.6);
+    background: rgba(241, 244, 237, 0.72);
   }
 
   .row:last-child {
@@ -353,13 +399,13 @@
 <h2 class="sr-only">日本アルプス主要山小屋の2026年予約開始日一覧。山域別フィルタと検索機能付き。</h2>
 <div class="page">
   <section class="hero">
-    <div class="eyebrow">SAlpineClub, 2026シーズン用</div>
-    <h1>日本アルプス主要山小屋<br>2026年予約開始日一覧</h1>
-    <p class="lead">主要な山小屋の予約開始タイミングを、山域別にざっと見渡せるように整理したページです。山小屋名、山域、受付方法で絞り込めるので、夏山計画の確認用メモとして使いやすくしています。</p>
+    <div class="eyebrow">⛰️ SAlpineClub, 2026シーズン用</div>
+    <h1>稜線の計画を立てやすくする、<br>山小屋予約開始日一覧</h1>
+    <p class="lead">北アルプスを中心に、主要な山小屋の予約開始タイミングを山域別に整理したページです。朝焼けの稜線を追うように、次の山行計画をざっと見渡せる一覧にしています。山小屋名、山域、受付方法で絞り込めるので、実用メモとしても使いやすい構成です。</p>
     <div class="hero-notes">
-      <div class="hero-note">検索対応, 山小屋名, 山域, 日付メモ</div>
-      <div class="hero-note">フィルタ対応, 山域別, Web受付, 電話受付</div>
-      <div class="hero-note">スマホでも一覧しやすい表示に調整</div>
+      <div class="hero-note">山行前の下調べ用, 山小屋名, 山域, 日付メモで検索</div>
+      <div class="hero-note">稜線ごとの比較に便利, 山域別, Web受付, 電話受付で絞り込み</div>
+      <div class="hero-note">スマホでも見やすい, 小屋メモ帳みたいな表示に調整</div>
     </div>
   </section>
 
