@@ -466,6 +466,13 @@
           <option value="電話">電話</option>
         </select>
       </label>
+      <label class="control">
+        <span class="label">並び順</span>
+        <select id="sort-order">
+          <option value="default">掲載順</option>
+          <option value="soonest">予約が近い順</option>
+        </select>
+      </label>
     </div>
 
     <div class="table-shell">
@@ -612,6 +619,7 @@ const statBar = document.getElementById('stat-bar');
 const search = document.getElementById('search');
 const areaFilter = document.getElementById('area-filter');
 const sourceFilter = document.getElementById('source-filter');
+const sortOrder = document.getElementById('sort-order');
 
 function escapeHtml(text) {
   return text
@@ -663,10 +671,40 @@ function renderRows(filtered) {
   }).join('');
 }
 
+function parseReservationRank(text) {
+  const raw = text || '';
+
+  if (raw.includes('受付中')) return -100000;
+  if (raw.includes('未定') || raw.includes('準備中') || raw.includes('未開始')) return 999999;
+
+  const monthDay = raw.match(/(前年)?(\d{1,2})\/(\d{1,2})/);
+  if (monthDay) {
+    const yearOffset = monthDay[1] ? -10000 : 0;
+    const month = Number(monthDay[2]);
+    const day = Number(monthDay[3]);
+    return yearOffset + month * 100 + day;
+  }
+
+  const monthOnly = raw.match(/(\d{1,2})月/);
+  if (monthOnly) {
+    const month = Number(monthOnly[1]);
+    return month * 100 + 99;
+  }
+
+  if (raw.includes('宿泊日1ヶ月前')) return 8000;
+  if (raw.includes('2ヶ月前')) return 8100;
+  if (raw.includes('3週間前')) return 8200;
+  if (raw.includes('30日前')) return 8300;
+  if (raw.includes('1年前')) return 100;
+
+  return 900000;
+}
+
 function render() {
   const q = search.value.toLowerCase().trim();
   const af = areaFilter.value;
   const sf = sourceFilter.value;
+  const so = sortOrder.value;
 
   const filtered = data.filter(item => {
     if (af !== 'all' && item.area !== af) return false;
@@ -678,6 +716,14 @@ function render() {
     return true;
   });
 
+  if (so === 'soonest') {
+    filtered.sort((a, b) => {
+      const rankDiff = parseReservationRank(a.date) - parseReservationRank(b.date);
+      if (rankDiff !== 0) return rankDiff;
+      return a.name.localeCompare(b.name, 'ja');
+    });
+  }
+
   renderStats(filtered);
   renderRows(filtered);
   count.textContent = `${filtered.length} / ${data.length} 件を表示`;
@@ -686,6 +732,7 @@ function render() {
 search.addEventListener('input', render);
 areaFilter.addEventListener('change', render);
 sourceFilter.addEventListener('change', render);
+sortOrder.addEventListener('change', render);
 render();
 </script>
 </body>
