@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本アルプス主要山小屋 2026予約開始日一覧</title>
+</head>
+<body>
+<h2 class="sr-only">日本アルプス主要山小屋の2026年予約開始日一覧。山域別フィルタと検索機能付き。</h2>
+<div style="padding: 0.5rem 0 1.5rem;">
+  <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; align-items: center;">
+    <input type="text" id="search" placeholder="山小屋名・山域で検索（例: 穂高、剱）" style="flex: 1; min-width: 180px;" />
+    <select id="area-filter" style="min-width: 140px;">
+      <option value="all">全山域</option>
+      <option value="北ア-槍穂">北ア・槍穂高</option>
+      <option value="北ア-表銀座">北ア・表銀座/常念</option>
+      <option value="北ア-裏銀座">北ア・裏銀座/黒部</option>
+      <option value="北ア-後立山">北ア・後立山</option>
+      <option value="北ア-立山剱">北ア・立山剱</option>
+      <option value="北ア-上高地">北ア・上高地</option>
+      <option value="中ア">中央アルプス</option>
+      <option value="南ア-北部">南ア北部</option>
+      <option value="南ア-南部">南ア南部</option>
+      <option value="八ヶ岳">八ヶ岳</option>
+    </select>
+    <select id="source-filter" style="min-width: 110px;">
+      <option value="all">受付方法</option>
+      <option value="Web">Web</option>
+      <option value="電話">電話</option>
+    </select>
+  </div>
+  <div id="stat-bar" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 1rem;"></div>
+  <div id="table-wrap" style="border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden;">
+    <div style="display: grid; grid-template-columns: 2.2fr 2fr 1.2fr 0.9fr; padding: 10px 14px; background: var(--color-background-secondary); font-size: 12px; font-weight: 500; color: var(--color-text-secondary); border-bottom: 0.5px solid var(--color-border-tertiary);">
+      <div>山小屋</div><div>予約開始日（2026年）</div><div>山域</div><div style="text-align:right;">受付</div>
+    </div>
+    <div id="rows"></div>
+  </div>
+  <p id="count" style="font-size: 12px; color: var(--color-text-tertiary); margin-top: 12px; text-align: right;"></p>
+</div>
+<script>
+const data = [
+  // ===== 北ア 槍・穂高 =====
+  {name:'穂高岳山荘', date:'宿泊日1ヶ月前 8時〜（4/27〜5/19分は3/27 8時〜）', area:'北ア-槍穂', method:'Web'},
+  {name:'涸沢ヒュッテ', date:'宿泊日1ヶ月前 8時〜', area:'北ア-槍穂', method:'電話'},
+  {name:'涸沢小屋', date:'4/25 8時〜（4/27〜5/25分）/ 以降は1ヶ月前', area:'北ア-槍穂', method:'電話'},
+  {name:'北穂高小屋', date:'宿泊日1ヶ月前 7時〜（GWは別日程）', area:'北ア-槍穂', method:'電話'},
+  {name:'槍ヶ岳山荘グループ（槍ヶ岳山荘・槍沢ロッヂ・南岳小屋・大天井ヒュッテ・殺生ヒュッテ・岳沢小屋）', date:'宿泊日1ヶ月前 9時〜', area:'北ア-槍穂', method:'Web'},
+  {name:'横尾山荘', date:'Web：2ヶ月前 7時〜 / 電話：1ヶ月前 7時〜', area:'北ア-槍穂', method:'Web'},
+  {name:'西穂山荘', date:'2ヶ月前 9:30〜', area:'北ア-槍穂', method:'Web'},
+  {name:'槍平小屋', date:'Web：5/1 12時〜 / 電話：1ヶ月前 10時〜', area:'北ア-槍穂', method:'Web'},
+  {name:'ヒュッテ大槍（燕山荘G）', date:'5/13・6/17・7/15 10時〜（3期）', area:'北ア-槍穂', method:'Web'},
+  {name:'焼岳小屋', date:'宿泊日1ヶ月前〜', area:'北ア-槍穂', method:'電話'},
+  // ===== 北ア 表銀座・常念 =====
+  {name:'燕山荘グループ（燕山荘・大天荘・有明荘）', date:'3/18 10時〜（6-7月）/ 4/22（8月）/ 5/13（9月）/ 6/17（10月〜）', area:'北ア-表銀座', method:'Web'},
+  {name:'中房温泉', date:'Web：2/15〜 / 電話：4/1〜（3ヶ月先まで）', area:'北ア-表銀座', method:'Web'},
+  {name:'常念小屋', date:'宿泊日1ヶ月前 8時〜', area:'北ア-表銀座', method:'電話'},
+  {name:'蝶ヶ岳ヒュッテ・大滝山荘', date:'Web：2ヶ月前 0時〜 / 電話：3週間前 月金 10時〜', area:'北ア-表銀座', method:'Web'},
+  // ===== 北ア 裏銀座・黒部・薬師 =====
+  {name:'三俣山荘', date:'4/3 10時〜', area:'北ア-裏銀座', method:'Web'},
+  {name:'水晶小屋', date:'4/1 10時〜', area:'北ア-裏銀座', method:'Web'},
+  {name:'湯俣山荘', date:'4/3 10時〜', area:'北ア-裏銀座', method:'Web'},
+  {name:'雲ノ平山荘', date:'4/8〜4/10 19時〜（月別に3期）/ 電話 4/12 12時〜', area:'北ア-裏銀座', method:'Web'},
+  {name:'双六小屋グループ（双六・黒部五郎小舎・鏡平・わさび平）', date:'6/10〜6/15 10時〜（期間別6期）', area:'北ア-裏銀座', method:'Web'},
+  {name:'笠ヶ岳山荘', date:'受付中', area:'北ア-裏銀座', method:'電話'},
+  {name:'野口五郎小屋', date:'4/1〜', area:'北ア-裏銀座', method:'電話'},
+  {name:'烏帽子小屋', date:'7/7 9時〜（昨年実績）', area:'北ア-裏銀座', method:'電話'},
+  {name:'薬師岳山荘', date:'3/29〜', area:'北ア-裏銀座', method:'電話'},
+  {name:'ロッジ太郎（太郎平・薬師沢・高天原山荘・スゴ乗越）', date:'5/7 開始予定', area:'北ア-裏銀座', method:'Web'},
+  {name:'五色ヶ原山荘', date:'4月〜', area:'北ア-裏銀座', method:'電話'},
+  {name:'奥黒部ヒュッテ', date:'2月〜', area:'北ア-裏銀座', method:'電話'},
+  {name:'ロッジくろよん', date:'受付中', area:'北ア-裏銀座', method:'電話'},
+  {name:'船窪小屋', date:'受付中', area:'北ア-裏銀座', method:'Web'},
+  // ===== 北ア 後立山 =====
+  {name:'白馬館グループ（白馬山荘・白馬鑓温泉・白馬大池山荘・栂池ヒュッテ・五竜山荘・キレット小屋）', date:'3/18・4/1・5/19・6/4・6/11 6時〜（期間別5期）', area:'北ア-後立山', method:'Web'},
+  {name:'白馬村営（白馬岳頂上宿舎・天狗山荘）', date:'4/1〜', area:'北ア-後立山', method:'Web'},
+  {name:'唐松岳頂上山荘', date:'宿泊日1ヶ月前 9時〜', area:'北ア-後立山', method:'Web'},
+  {name:'冷池山荘・種池山荘・新越山荘', date:'5/16・5/23・5/30 10時〜（3期）', area:'北ア-後立山', method:'Web'},
+  {name:'朝日小屋', date:'宿泊日1ヶ月前 8-10時（6/19〜）', area:'北ア-後立山', method:'電話'},
+  {name:'白馬岳蓮華温泉ロッジ', date:'3/14〜（春スキー）/ 夏登山期は未定', area:'北ア-後立山', method:'電話'},
+  {name:'風吹山荘', date:'3/1〜', area:'北ア-後立山', method:'電話'},
+  {name:'栂海新道（白鳥小屋等）', date:'受付中', area:'北ア-後立山', method:'Web'},
+  {name:'針ノ木小屋・大沢小屋', date:'2026年は準備中（予約受付未開始）', area:'北ア-後立山', method:'電話'},
+  // ===== 北ア 立山剱 =====
+  {name:'剱澤小屋', date:'1/10 13時〜', area:'北ア-立山剱', method:'Web'},
+  {name:'剣山荘', date:'Web：2/10 12時〜 / 電話：3/5 10時〜', area:'北ア-立山剱', method:'Web'},
+  {name:'剱御前小舎', date:'受付中', area:'北ア-立山剱', method:'電話'},
+  {name:'早月小屋', date:'4/1〜（メール）', area:'北ア-立山剱', method:'Web'},
+  {name:'馬場島荘', date:'3月〜', area:'北ア-立山剱', method:'電話'},
+  {name:'ホテル立山', date:'Web：前年11/30 9時〜 / 電話：前年12/5 9時〜', area:'北ア-立山剱', method:'Web'},
+  {name:'雷鳥荘', date:'Web：前年12月〜 / 電話：4/10 9時〜', area:'北ア-立山剱', method:'Web'},
+  {name:'みくりが池温泉', date:'Web：1/6 9時〜 / 電話：1/9 9時〜', area:'北ア-立山剱', method:'Web'},
+  {name:'雷鳥沢ヒュッテ', date:'1/15〜', area:'北ア-立山剱', method:'電話'},
+  {name:'立山室堂山荘', date:'2/1〜', area:'北ア-立山剱', method:'Web'},
+  {name:'一の越山荘', date:'受付中', area:'北ア-立山剱', method:'電話'},
+  {name:'真砂沢ロッジ', date:'受付中', area:'北ア-立山剱', method:'電話'},
+  {name:'大日小屋', date:'4/1〜', area:'北ア-立山剱', method:'Web'},
+  {name:'大日平山荘', date:'受付中（18-21時）', area:'北ア-立山剱', method:'電話'},
+  {name:'仙人池ヒュッテ・池ノ平小屋', date:'準備中', area:'北ア-立山剱', method:'Web'},
+  {name:'内蔵助山荘', date:'未定', area:'北ア-立山剱', method:'電話'},
+  // ===== 北ア 上高地 =====
+  {name:'上高地観光施設事業（徳沢ロッヂ・上高地アルペンホテル）', date:'Web：1/29 9時〜 / 電話：2/1 9時〜', area:'北ア-上高地', method:'Web'},
+  {name:'徳澤園', date:'受付中', area:'北ア-上高地', method:'電話'},
+  {name:'上高地西糸屋山荘', date:'受付中', area:'北ア-上高地', method:'Web'},
+  {name:'上高地アルプス山荘（日本山岳ガイド協会）', date:'2/1 12時〜（会員限定）', area:'北ア-上高地', method:'Web'},
+  {name:'位ヶ原山荘（乗鞍）', date:'受付中', area:'北ア-上高地', method:'Web'},
+  // ===== 中央アルプス =====
+  {name:'宝剣山荘・天狗荘・頂上山荘（宮田観光開発）', date:'受付中', area:'中ア', method:'電話'},
+  {name:'木曽殿山荘', date:'1月〜', area:'中ア', method:'電話'},
+  {name:'駒峰ヒュッテ（空木岳）', date:'Webメールフォームで受付', area:'中ア', method:'Web'},
+  {name:'西駒山荘', date:'2/20 8時〜', area:'中ア', method:'Web'},
+  // ===== 南ア 北部 =====
+  {name:'芦安ファンクラブ（北岳山荘・白根御池小屋）', date:'4/1 10時〜', area:'南ア-北部', method:'Web'},
+  {name:'長衛小屋（芦安ファンクラブ）', date:'4/1 9時〜（電話のみ）', area:'南ア-北部', method:'電話'},
+  {name:'広河原山荘', date:'4/1 10時〜', area:'南ア-北部', method:'Web'},
+  {name:'北岳肩の小屋', date:'4/10 10時〜（6-8月）/ 4/17 10時〜（9-10月）', area:'南ア-北部', method:'電話'},
+  {name:'薬師ヶ岳小屋・南御室小屋', date:'1月〜', area:'南ア-北部', method:'電話'},
+  {name:'鳳凰小屋', date:'4月初旬頃から', area:'南ア-北部', method:'電話'},
+  {name:'夜叉神ヒュッテ', date:'4/1 10時〜', area:'南ア-北部', method:'Web'},
+  {name:'夜叉神峠小屋', date:'受付中', area:'南ア-北部', method:'電話'},
+  {name:'七丈小屋（甲斐駒）', date:'4/10〜', area:'南ア-北部', method:'Web'},
+  {name:'北沢峠こもれび山荘（伊那市観光）', date:'3/1 8時〜', area:'南ア-北部', method:'Web'},
+  {name:'仙丈小屋（伊那市観光）', date:'4/1 9時〜', area:'南ア-北部', method:'Web'},
+  {name:'馬の背ヒュッテ', date:'4/1 13時〜', area:'南ア-北部', method:'Web'},
+  {name:'大平山荘', date:'受付中', area:'南ア-北部', method:'電話'},
+  {name:'仙水小屋・早川尾根小屋', date:'受付中（TEL共通）', area:'南ア-北部', method:'電話'},
+  {name:'両俣小屋', date:'受付中（10人未満は予約不要）', area:'南ア-北部', method:'電話'},
+  {name:'大門沢小屋・農鳥小屋', date:'4/18 9:30〜', area:'南ア-北部', method:'電話'},
+  {name:'青木鉱泉', date:'4/14〜', area:'南ア-北部', method:'Web'},
+  {name:'仙流荘', date:'受付中', area:'南ア-北部', method:'Web'},
+  {name:'塩見小屋（伊那市観光）', date:'6/1 8時〜（GWは4/1 8時〜）', area:'南ア-北部', method:'Web'},
+  {name:'三伏峠小屋', date:'3週間前〜', area:'南ア-北部', method:'Web'},
+  // ===== 南ア 南部 =====
+  {name:'特種東海フォレスト（椹島ロッヂ・千枚・赤石・荒川・百間洞・熊の平小屋等）', date:'椹島：4/6〜電話（4/26〜6/30分）/ 夏山期は6月頃Web先行、電話はその後', area:'南ア-南部', method:'電話'},
+  {name:'光岳小屋', date:'5/20 0時〜', area:'南ア-南部', method:'Web'},
+  {name:'聖光小屋', date:'3/20〜', area:'南ア-南部', method:'電話'},
+  {name:'井川観光協会（聖平小屋・茶臼小屋・横窪沢小屋）', date:'未定（例年6月頃発表）', area:'南ア-南部', method:'Web'},
+  // ===== 八ヶ岳 =====
+  {name:'赤岳鉱泉・行者小屋', date:'4/1 12時〜（5/1〜11/30宿泊分）', area:'八ヶ岳', method:'Web'},
+  {name:'硫黄岳山荘グループ（硫黄岳・根石岳・夏沢鉱泉）', date:'Web：1年前から', area:'八ヶ岳', method:'Web'},
+  {name:'ふじもりグループ（赤岳天望荘・八ヶ岳山荘・美濃戸山荘・ヒュッテ夏沢）', date:'受付中', area:'八ヶ岳', method:'Web'},
+  {name:'本沢温泉グループ（赤岳頂上山荘・キレット小屋・山びこ荘）', date:'受付中', area:'八ヶ岳', method:'電話'},
+  {name:'青年小屋', date:'受付中（権現小屋は休業）', area:'八ヶ岳', method:'電話'},
+  {name:'赤岳山荘', date:'受付中', area:'八ヶ岳', method:'電話'},
+  {name:'美濃戸高原やまのこ村', date:'受付中', area:'八ヶ岳', method:'電話'},
+  {name:'蓼科山荘・双子池ヒュッテ', date:'4/1〜', area:'八ヶ岳', method:'Web'},
+  {name:'蓼科山頂ヒュッテ', date:'1/1〜', area:'八ヶ岳', method:'Web'},
+  {name:'唐沢鉱泉', date:'3/1〜', area:'八ヶ岳', method:'Web'},
+  {name:'オーレン小屋', date:'受付中（2/7 10時〜）', area:'八ヶ岳', method:'Web'},
+  {name:'黒百合ヒュッテ', date:'Web：30日前 0時〜 / 電話：30日前 9時〜', area:'八ヶ岳', method:'Web'},
+  {name:'高見石小屋', date:'4/1・5/1・6/1・7/1・8/1〜（月別5期）', area:'八ヶ岳', method:'電話'},
+  {name:'しらびそ小屋', date:'受付中', area:'八ヶ岳', method:'電話'},
+  {name:'北横岳ヒュッテ', date:'受付中', area:'八ヶ岳', method:'電話'},
+  {name:'縞枯山荘', date:'受付中', area:'八ヶ岳', method:'電話'},
+  {name:'麦草ヒュッテ', date:'受付中', area:'八ヶ岳', method:'電話'},
+  {name:'青苔荘', date:'受付中', area:'八ヶ岳', method:'電話'},
+  {name:'白駒荘', date:'3ヶ月前の1日から', area:'八ヶ岳', method:'Web'}
+];
+
+function render(){
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  const af = document.getElementById('area-filter').value;
+  const sf = document.getElementById('source-filter').value;
+  const filtered = data.filter(d => {
+    if (af !== 'all' && d.area !== af) return false;
+    if (sf !== 'all' && d.method !== sf) return false;
+    if (q && !(d.name.toLowerCase().includes(q) || d.date.toLowerCase().includes(q) || d.area.toLowerCase().includes(q))) return false;
+    return true;
+  });
+  const rows = document.getElementById('rows');
+  rows.innerHTML = filtered.map((d, i) => {
+    const bg = i % 2 === 0 ? 'transparent' : 'var(--color-background-secondary)';
+    const methodColor = d.method === 'Web' ? '#185FA5' : '#854F0B';
+    const methodBg = d.method === 'Web' ? '#E6F1FB' : '#FAEEDA';
+    return `<div style="display: grid; grid-template-columns: 2.2fr 2fr 1.2fr 0.9fr; padding: 10px 14px; background: ${bg}; font-size: 13px; align-items: center; border-bottom: 0.5px solid var(--color-border-tertiary); gap: 8px;">
+      <div style="font-weight: 500; color: var(--color-text-primary); line-height: 1.4;">${d.name}</div>
+      <div style="color: var(--color-text-secondary); line-height: 1.4; font-size: 12px;">${d.date}</div>
+      <div style="color: var(--color-text-tertiary); font-size: 12px;">${d.area}</div>
+      <div style="text-align: right;"><span style="display: inline-block; padding: 2px 8px; border-radius: var(--border-radius-md); background: ${methodBg}; color: ${methodColor}; font-size: 11px; font-weight: 500;">${d.method}</span></div>
+    </div>`;
+  }).join('');
+  document.getElementById('count').textContent = `${filtered.length} / ${data.length} 件を表示`;
+
+  // Stats
+  const total = data.length;
+  const webCount = data.filter(d => d.method === 'Web').length;
+  const telCount = total - webCount;
+  const areas = new Set(data.map(d => d.area)).size;
+  const stats = [
+    {label: '掲載山小屋数', val: total},
+    {label: 'Web受付', val: webCount},
+    {label: '電話受付', val: telCount},
+    {label: '山域数', val: areas}
+  ];
+  document.getElementById('stat-bar').innerHTML = stats.map(s =>
+    `<div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 14px;">
+      <div style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px;">${s.label}</div>
+      <div style="font-size: 22px; font-weight: 500;">${s.val}</div>
+    </div>`).join('');
+}
+document.getElementById('search').addEventListener('input', render);
+document.getElementById('area-filter').addEventListener('change', render);
+document.getElementById('source-filter').addEventListener('change', render);
+render();
+</script>
+</body>
+</html>
