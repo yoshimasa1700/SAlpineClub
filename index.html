@@ -417,6 +417,28 @@
       align-items: flex-start;
     }
   }
+
+  /* Translation Widget Styles */
+  #google_translate_element {
+    margin-left: auto;
+  }
+  .goog-te-gadget-simple {
+    background-color: rgba(255,255,255,0.88) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-sm) !important;
+    padding: 6px 10px !important;
+    font-family: inherit !important;
+    font-size: 13px !important;
+  }
+  .goog-te-gadget-icon {
+    display: none;
+  }
+  .goog-te-menu-value span {
+    color: var(--text) !important;
+  }
+  body { top: 0 !important; }
+  .skiptranslate iframe { display: none !important; }
+
 </style>
 </head>
 <body>
@@ -436,6 +458,9 @@
   <div id="stat-bar" class="stats"></div>
 
   <section class="panel">
+    <div class="controls">
+      <div id="google_translate_element"></div>
+    </div>
     <div class="controls">
       <label class="control search">
         <span class="label">検索</span>
@@ -735,5 +760,15 @@ sourceFilter.addEventListener('change', render);
 sortOrder.addEventListener('change', render);
 render();
 </script>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'ja',
+    includedLanguages: 'en,zh-CN,zh-TW',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
