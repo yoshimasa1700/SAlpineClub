@@ -419,16 +419,25 @@
   }
 
   /* Translation Widget Styles */
+  .translate-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 12px;
+  }
   #google_translate_element {
-    margin-left: auto;
+    min-height: 32px;
   }
   .goog-te-gadget-simple {
     background-color: rgba(255,255,255,0.88) !important;
     border: 1px solid var(--border) !important;
     border-radius: var(--radius-sm) !important;
-    padding: 6px 10px !important;
+    padding: 6px 12px !important;
     font-family: inherit !important;
     font-size: 13px !important;
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
   }
   .goog-te-gadget-icon {
     display: none;
@@ -438,6 +447,16 @@
   }
   body { top: 0 !important; }
   .skiptranslate iframe { display: none !important; }
+  
+  @media (max-width: 640px) {
+    .translate-wrapper {
+      justify-content: flex-start;
+    }
+    .goog-te-gadget-simple {
+      width: 100%;
+      justify-content: center;
+    }
+  }
 
 </style>
 </head>
@@ -458,7 +477,7 @@
   <div id="stat-bar" class="stats"></div>
 
   <section class="panel">
-    <div class="controls">
+    <div class="translate-wrapper">
       <div id="google_translate_element"></div>
     </div>
     <div class="controls">
