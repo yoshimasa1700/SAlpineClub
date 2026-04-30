@@ -479,6 +479,7 @@
   <section class="panel">
     <div class="translate-wrapper">
       <div id="google_translate_element"></div>
+      <button id="reset-lang-btn" style="display:none; margin-left:8px; padding:6px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); background:rgba(255,255,255,0.88); color:var(--text); font-size:13px; cursor:pointer;">日本語に戻す</button>
     </div>
     <div class="controls">
       <label class="control search">
@@ -779,15 +780,40 @@ sourceFilter.addEventListener('change', render);
 sortOrder.addEventListener('change', render);
 render();
 </script>
+
 <script type="text/javascript">
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({
     pageLanguage: 'ja',
-    includedLanguages: 'ja,en,zh-CN,zh-TW',
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    includedLanguages: 'en,zh-CN,zh-TW',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+    autoDisplay: false
   }, 'google_translate_element');
 }
+
+// Watch for language changes to show/hide the reset button
+document.addEventListener('DOMContentLoaded', () => {
+  const checkLang = () => {
+    const isTranslated = document.cookie.includes('googtrans=');
+    const btn = document.getElementById('reset-lang-btn');
+    if(btn) btn.style.display = isTranslated ? 'block' : 'none';
+  };
+  
+  // Check periodically since Google Translate loads async
+  setInterval(checkLang, 1000);
+  checkLang();
+
+  const resetBtn = document.getElementById('reset-lang-btn');
+  if(resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/SAlpineClub/; domain=" + location.hostname + ";";
+      location.reload();
+    });
+  }
+});
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>
