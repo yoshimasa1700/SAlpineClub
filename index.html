@@ -422,39 +422,30 @@
   .translate-wrapper {
     display: flex;
     justify-content: flex-end;
+    gap: 8px;
     width: 100%;
     margin-bottom: 12px;
   }
-  #google_translate_element {
-    min-height: 32px;
-  }
-  .goog-te-gadget-simple {
-    background-color: rgba(255,255,255,0.88) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: var(--radius-sm) !important;
-    padding: 6px 12px !important;
-    font-family: inherit !important;
-    font-size: 13px !important;
-    display: flex !important;
+  .translate-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.88);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
     align-items: center;
-    gap: 4px;
   }
-  .goog-te-gadget-icon {
-    display: none;
+  .translate-btn:hover {
+    background: rgba(245, 232, 216, 0.9);
   }
-  .goog-te-menu-value span {
-    color: var(--text) !important;
-  }
-  body { top: 0 !important; }
-  .goog-te-banner-frame { display: none !important; }
   
   @media (max-width: 640px) {
     .translate-wrapper {
       justify-content: flex-start;
-    }
-    .goog-te-gadget-simple {
-      width: 100%;
-      justify-content: center;
+      flex-wrap: wrap;
     }
   }
 
@@ -478,8 +469,9 @@
 
   <section class="panel">
     <div class="translate-wrapper">
-      <div id="google_translate_element"></div>
-      <button id="reset-lang-btn" style="display:none; margin-left:8px; padding:6px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); background:rgba(255,255,255,0.88); color:var(--text); font-size:13px; cursor:pointer;">日本語に戻す</button>
+      <button class="translate-btn" onclick="translatePage('en')">English</button>
+      <button class="translate-btn" onclick="translatePage('zh-CN')">中文</button>
+      <button id="reset-lang-btn" class="translate-btn" style="display:none;" onclick="resetLanguage()">日本語に戻す</button>
     </div>
     <div class="controls">
       <label class="control search">
@@ -782,38 +774,45 @@ render();
 </script>
 
 <script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({
-    pageLanguage: 'ja',
-    includedLanguages: 'en,zh-CN,zh-TW',
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-    autoDisplay: false
-  }, 'google_translate_element');
+function translatePage(targetLang) {
+  // If we're already on a translated page, just change the language in the cookie
+  if (window.location.hostname === 'translate.goog') {
+    document.cookie = `googtrans=/ja/${targetLang}; path=/; domain=.translate.goog`;
+    location.reload();
+    return;
+  }
+
+  // Set translation cookie for the original domain just in case
+  document.cookie = `googtrans=/ja/${targetLang}; path=/;`;
+  document.cookie = `googtrans=/ja/${targetLang}; path=/SAlpineClub/; domain=${location.hostname};`;
+  
+  // Redirect to Google Translate's proxy service
+  const currentUrl = encodeURIComponent(window.location.href);
+  window.location.href = `https://translate.google.com/translate?sl=ja&tl=${targetLang}&u=${currentUrl}`;
 }
 
-// Watch for language changes to show/hide the reset button
-document.addEventListener('DOMContentLoaded', () => {
-  const checkLang = () => {
-    const isTranslated = document.cookie.includes('googtrans=');
-    const btn = document.getElementById('reset-lang-btn');
-    if(btn) btn.style.display = isTranslated ? 'block' : 'none';
-  };
-  
-  // Check periodically since Google Translate loads async
-  setInterval(checkLang, 1000);
-  checkLang();
-
-  const resetBtn = document.getElementById('reset-lang-btn');
-  if(resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/SAlpineClub/; domain=" + location.hostname + ";";
-      location.reload();
-    });
+function resetLanguage() {
+  if (window.location.hostname === 'translate.goog') {
+    // If inside Google's proxy, extract the original URL and redirect back
+    const originalUrl = new URLSearchParams(window.location.search).get('u');
+    if (originalUrl) {
+      window.location.href = decodeURIComponent(originalUrl);
+      return;
+    }
   }
+  
+  // Clear cookies and reload
+  document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/SAlpineClub/; domain=${location.hostname};`;
+  location.reload();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const isTranslated = window.location.hostname === 'translate.goog' || document.cookie.includes('googtrans=');
+  const btn = document.getElementById('reset-lang-btn');
+  if(btn) btn.style.display = isTranslated ? 'inline-flex' : 'none';
 });
 </script>
-<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 </body>
 </html>
