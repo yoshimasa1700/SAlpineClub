@@ -455,13 +455,13 @@
 <h2 class="sr-only">日本アルプス主要山小屋の2026年予約開始日一覧。山域別フィルタと検索機能付き。</h2>
 <div class="page">
   <section class="hero">
-    <div class="eyebrow">⛰️ SAlpineClub, 2026シーズン用</div>
-    <h1>稜線の計画を立てやすくする、<br>山小屋予約開始日一覧</h1>
-    <p class="lead">北アルプスを中心に、主要な山小屋の予約開始タイミングを山域別に整理したページです。朝焼けの稜線を追うように、次の山行計画をざっと見渡せる一覧にしています。山小屋名、山域、受付方法で絞り込めるので、実用メモとしても使いやすい構成です。</p>
+    <div class="eyebrow" data-i18n="eyebrow">⛰️ SAlpineClub, 2026シーズン用</div>
+    <h1 data-i18n="h1">稜線の計画を立てやすくする、<br>山小屋予約開始日一覧</h1>
+    <p class="lead" data-i18n="lead">北アルプスを中心に、主要な山小屋の予約開始タイミングを山域別に整理したページです。朝焼けの稜線を追うように、次の山行計画をざっと見渡せる一覧にしています。山小屋名、山域、受付方法で絞り込めるので、実用メモとしても使いやすい構成です。</p>
     <div class="hero-notes">
-      <div class="hero-note">山行前の下調べ用, 山小屋名, 山域, 日付メモで検索</div>
-      <div class="hero-note">稜線ごとの比較に便利, 山域別, Web受付, 電話受付で絞り込み</div>
-      <div class="hero-note">スマホでも見やすい, 小屋メモ帳みたいな表示に調整</div>
+      <div class="hero-note" data-i18n="note1">山行前の下調べ用, 山小屋名, 山域, 日付メモで検索</div>
+      <div class="hero-note" data-i18n="note2">稜線ごとの比較に便利, 山域別, Web受付, 電話受付で絞り込み</div>
+      <div class="hero-note" data-i18n="note3">スマホでも見やすい, 小屋メモ帳みたいな表示に調整</div>
     </div>
   </section>
 
@@ -469,17 +469,17 @@
 
   <section class="panel">
     <div class="translate-wrapper">
-      <button class="translate-btn" onclick="translatePage('en')">English</button>
-      <button class="translate-btn" onclick="translatePage('zh-CN')">中文</button>
-      <button id="reset-lang-btn" class="translate-btn" style="display:none;" onclick="resetLanguage()">日本語に戻す</button>
+      <button class="translate-btn" onclick="setLang('ja')">日本語</button>
+      <button class="translate-btn" onclick="setLang('en')">English</button>
+      <button class="translate-btn" onclick="setLang('zh')">中文</button>
     </div>
     <div class="controls">
       <label class="control search">
-        <span class="label">検索</span>
-        <input type="text" id="search" placeholder="山小屋名、山域、日付メモで検索。例: 穂高、剱、4/1" />
+        <span class="label" data-i18n="search_label">検索</span>
+        <input type="text" id="search" data-i18n-ph="search_ph" placeholder="山小屋名、山域、日付メモで検索。例: 穂高、剱、4/1" />
       </label>
       <label class="control">
-        <span class="label">山域</span>
+        <span class="label" data-i18n="area_label">山域</span>
         <select id="area-filter">
           <option value="all">全山域</option>
           <option value="北ア-槍穂">北ア・槍穂高</option>
@@ -496,7 +496,7 @@
         </select>
       </label>
       <label class="control">
-        <span class="label">受付方法</span>
+        <span class="label" data-i18n="method_label">受付方法</span>
         <select id="source-filter">
           <option value="all">すべて</option>
           <option value="Web">Web</option>
@@ -504,7 +504,7 @@
         </select>
       </label>
       <label class="control">
-        <span class="label">並び順</span>
+        <span class="label" data-i18n="sort_label">並び順</span>
         <select id="sort-order">
           <option value="default">掲載順</option>
           <option value="soonest">予約が近い順</option>
@@ -514,22 +514,284 @@
 
     <div class="table-shell">
       <div class="table-head">
-        <div>山小屋</div>
-        <div>予約開始日・連絡先（2026年）</div>
-        <div>山域</div>
-        <div style="text-align:right;">受付</div>
+        <div data-i18n="th_hut">山小屋</div>
+        <div data-i18n="th_date">予約開始日・連絡先（2026年）</div>
+        <div data-i18n="th_area">山域</div>
+        <div style="text-align:right;" data-i18n="th_method">受付</div>
       </div>
       <div id="rows"></div>
     </div>
 
     <div class="meta-row">
-      <div class="footnote">掲載情報は確認用の整理メモです。最終的な予約条件や更新情報は各山小屋の公式案内で確認してください。</div>
+      <div class="footnote" data-i18n="footnote">掲載情報は確認用の整理メモです。最終的な予約条件や更新情報は各山小屋の公式案内で確認してください。</div>
       <div id="count"></div>
     </div>
   </section>
 </div>
 
 <script>
+
+let currentLang = 'ja';
+
+const i18n = {
+  // UI Elements
+  'eyebrow': { en: '⛰️ SAlpineClub, 2026 Season', zh: '⛰️ SAlpineClub, 2026 季节' },
+  'h1': { en: 'Mountain Hut Reservation Schedule 2026', zh: '2026年山小屋预订开始时间表' },
+  'lead': { en: 'A schedule of reservation start dates for major mountain huts, mainly in the Northern Alps. Filter by hut name, area, or method to easily plan your next alpine trip.', zh: '汇总了以北阿尔卑斯为主的主要山小屋的预订开始时间。可通过名称、区域或预订方式进行筛选，方便您制定登山计划。' },
+  'note1': { en: 'Search by hut name, area, or date', zh: '按山小屋名称、区域或日期搜索' },
+  'note2': { en: 'Filter by area, Web, or Phone', zh: '按区域、网络或电话预订筛选' },
+  'note3': { en: 'Mobile-friendly list view', zh: '适合手机浏览的列表视图' },
+  'search_label': { en: 'Search', zh: '搜索' },
+  'search_ph': { en: 'Search hut, area, date. e.g. Hotaka, Tsurugi, 4/1', zh: '搜索山小屋、区域、日期。例：穗高、剑岳、4/1' },
+  'area_label': { en: 'Area', zh: '区域' },
+  'method_label': { en: 'Method', zh: '预订方式' },
+  'sort_label': { en: 'Sort by', zh: '排序' },
+  'th_hut': { en: 'Mountain Hut', zh: '山小屋' },
+  'th_date': { en: 'Reservations & Contact (2026)', zh: '预订开始日期及联系方式（2026年）' },
+  'th_area': { en: 'Area', zh: '区域' },
+  'th_method': { en: 'Method', zh: '方式' },
+  'footnote': { en: 'This is a reference memo. Please check official websites for the latest rules.', zh: '本表仅供参考。请务必查看各山小屋官网获取最新预订规则。' },
+  
+  // Stats & Dynamic UI
+  '掲載件数': { en: 'Total Huts', zh: '收录总数' },
+  '表示中': { en: 'Showing', zh: '显示中' },
+  'Web受付': { en: 'Web Booking', zh: '网络预订' },
+  '山域数': { en: 'Areas', zh: '区域数' },
+  '予約サイト ↗': { en: 'Book ↗', zh: '预订 ↗' },
+  '条件に合う山小屋が見つかりませんでした。検索語やフィルタを少しゆるめてみてください。': { en: 'No huts found. Try relaxing your filters.', zh: '未找到符合条件的山小屋。请尝试放宽搜索条件。' },
+  
+  // Areas
+  '全山域': { en: 'All Areas', zh: '全部区域' },
+  '北ア・槍穂高': { en: 'N.Alps: Yari/Hotaka', zh: '北阿尔卑斯：枪/穗高' },
+  '北ア・表銀座/常念': { en: 'N.Alps: Omoteginza/Jonen', zh: '北阿尔卑斯：表银座/常念' },
+  '北ア・裏銀座/黒部': { en: 'N.Alps: Uraginza/Kurobe', zh: '北阿尔卑斯：里银座/黑部' },
+  '北ア・後立山': { en: 'N.Alps: Ushirotateyama', zh: '北阿尔卑斯：后立山' },
+  '北ア・立山剱': { en: 'N.Alps: Tateyama/Tsurugi', zh: '北阿尔卑斯：立山/剑岳' },
+  '北ア・上高地': { en: 'N.Alps: Kamikochi', zh: '北阿尔卑斯：上高地' },
+  '中央アルプス': { en: 'Central Alps', zh: '中央阿尔卑斯' },
+  '南ア北部': { en: 'S.Alps: North', zh: '南阿尔卑斯：北部' },
+  '南ア南部': { en: 'S.Alps: South', zh: '南阿尔卑斯：南部' },
+  '八ヶ岳': { en: 'Yatsugatake', zh: '八岳' },
+  '頸城・妙高火打': { en: 'Kubiki/Myoko', zh: '颈城/妙高' },
+  '北ア-槍穂': { en: 'N.Alps: Yari/Hotaka', zh: '北阿尔卑斯：枪/穗高' },
+  '北ア-表銀座': { en: 'N.Alps: Omoteginza', zh: '北阿尔卑斯：表银座' },
+  '北ア-裏銀座': { en: 'N.Alps: Uraginza', zh: '北阿尔卑斯：里银座' },
+  '北ア-後立山': { en: 'N.Alps: Ushirotateyama', zh: '北阿尔卑斯：后立山' },
+  '北ア-立山剱': { en: 'N.Alps: Tateyama/Tsurugi', zh: '北阿尔卑斯：立山/剑岳' },
+  '北ア-上高地': { en: 'N.Alps: Kamikochi', zh: '北阿尔卑斯：上高地' },
+  '中ア': { en: 'Central Alps', zh: '中央阿尔卑斯' },
+  '南ア-北部': { en: 'S.Alps: North', zh: '南阿尔卑斯：北部' },
+  '南ア-南部': { en: 'S.Alps: South', zh: '南阿尔卑斯：南部' },
+  '頸城': { en: 'Kubiki/Myoko', zh: '颈城/妙高' },
+  
+  // Methods & Sort
+  'すべて': { en: 'All', zh: '全部' },
+  '電話': { en: 'Phone', zh: '电话' },
+  '掲載順': { en: 'Default', zh: '默认' },
+  '予約が近い順': { en: 'Soonest', zh: '预订临近' },
+
+  // Huts
+  '穂高岳山荘': { en: 'Hotakadake Sanso', zh: '穗高岳山庄' },
+  '涸沢ヒュッテ': { en: 'Karasawa Hutte', zh: '涸泽Hutte' },
+  '涸沢小屋': { en: 'Karasawa Goya', zh: '涸泽小屋' },
+  '北穂高小屋': { en: 'Kitahotaka Goya', zh: '北穗高小屋' },
+  '槍ヶ岳山荘グループ（槍ヶ岳山荘・槍沢ロッヂ・南岳小屋・大天井ヒュッテ・殺生ヒュッテ・岳沢小屋）': { en: 'Yarigatake Sanso Group', zh: '枪岳山庄集团' },
+  '横尾山荘': { en: 'Yokoo Sanso', zh: '横尾山庄' },
+  '西穂山荘': { en: 'Nishiho Sanso', zh: '西穗山庄' },
+  '槍平小屋': { en: 'Yaridaira Goya', zh: '枪平小屋' },
+  'ヒュッテ大槍（燕山荘G）': { en: 'Hutte Oyari', zh: 'Hutte大枪' },
+  '焼岳小屋': { en: 'Yakedake Goya', zh: '烧岳小屋' },
+  '燕山荘グループ（燕山荘・大天荘・有明荘）': { en: 'Enzanso Group', zh: '燕山庄集团' },
+  '中房温泉': { en: 'Nakabusa Onsen', zh: '中房温泉' },
+  '常念小屋': { en: 'Jonen Goya', zh: '常念小屋' },
+  '蝶ヶ岳ヒュッテ・大滝山荘': { en: 'Chogatake Hutte, Otaki Sanso', zh: '蝶岳Hutte・大泷山庄' },
+  '三俣山荘': { en: 'Mitsumata Sanso', zh: '三俣山庄' },
+  '水晶小屋': { en: 'Suisho Goya', zh: '水晶小屋' },
+  '湯俣山荘': { en: 'Yumata Sanso', zh: '汤俣山庄' },
+  '雲ノ平山荘': { en: 'Kumonodaira Sanso', zh: '云之平山庄' },
+  '双六小屋グループ（双六・黒部五郎小舎・鏡平・わさび平）': { en: 'Sugoroku Goya Group', zh: '双六小屋集团' },
+  '笠ヶ岳山荘': { en: 'Kasagatake Sanso', zh: '笠岳山庄' },
+  '野口五郎小屋': { en: 'Noguchigoro Goya', zh: '野口五郎小屋' },
+  '烏帽子小屋': { en: 'Eboshi Goya', zh: '乌帽子小屋' },
+  '薬師岳山荘': { en: 'Yakushidake Sanso', zh: '药师岳山庄' },
+  'ロッジ太郎（太郎平・薬師沢・高天原山荘・スゴ乗越）': { en: 'Lodge Taro Group', zh: 'Lodge 太郎集团' },
+  '五色ヶ原山荘': { en: 'Goshikigahara Sanso', zh: '五色原山庄' },
+  '奥黒部ヒュッテ': { en: 'Okukurobe Hutte', zh: '奥黑部Hutte' },
+  'ロッジくろよん': { en: 'Lodge Kuroyon', zh: 'Lodge 黑部四号' },
+  '船窪小屋': { en: 'Funakubo Goya', zh: '船洼小屋' },
+  '白馬館グループ（白馬山荘・白馬鑓温泉・白馬大池山荘・栂池ヒュッテ・五竜山荘・キレット小屋）': { en: 'Hakubakan Group', zh: '白马馆集团' },
+  '白馬村営（白馬岳頂上宿舎・天狗山荘）': { en: 'Hakuba Village Huts', zh: '白马村营山庄' },
+  '唐松岳頂上山荘': { en: 'Karamatsudake Chojo Sanso', zh: '唐松岳顶上山庄' },
+  '冷池山荘・種池山荘・新越山荘': { en: 'Tsumetaike, Taneike, Shinetsu Sanso', zh: '冷池・种池・新越山庄' },
+  '朝日小屋': { en: 'Asahi Goya', zh: '朝日小屋' },
+  '白馬岳蓮華温泉ロッジ': { en: 'Renge Onsen Lodge', zh: '莲华温泉Lodge' },
+  '風吹山荘': { en: 'Kazafuki Sanso', zh: '风吹山庄' },
+  '栂海新道（白鳥小屋等）': { en: 'Tsugami Shindo Huts', zh: '栂海新道（白鸟小屋等）' },
+  '針ノ木小屋・大沢小屋': { en: 'Harinoki Goya, Osawa Goya', zh: '针之木小屋・大泽小屋' },
+  '剱澤小屋': { en: 'Tsurugizawa Goya', zh: '剑泽小屋' },
+  '剣山荘': { en: 'Tsurugisanso', zh: '剑山庄' },
+  '剱御前小舎': { en: 'Tsurugigozen Goya', zh: '剑御前小屋' },
+  '早月小屋': { en: 'Hayatsuki Goya', zh: '早月小屋' },
+  '馬場島荘': { en: 'Babajima So', zh: '马场岛庄' },
+  'ホテル立山': { en: 'Hotel Tateyama', zh: '立山酒店' },
+  '雷鳥荘': { en: 'Raichoso', zh: '雷鸟庄' },
+  'みくりが池温泉': { en: 'Mikurigaike Onsen', zh: '御库里池温泉' },
+  '雷鳥沢ヒュッテ': { en: 'Raichozawa Hutte', zh: '雷鸟泽Hutte' },
+  '立山室堂山荘': { en: 'Tateyama Murodo Sanso', zh: '立山室堂山庄' },
+  '一の越山荘': { en: 'Ichinokoshi Sanso', zh: '一之越山庄' },
+  '真砂沢ロッジ': { en: 'Masagozawa Lodge', zh: '真砂泽Lodge' },
+  '大日小屋': { en: 'Dainichi Goya', zh: '大日小屋' },
+  '大日平山荘': { en: 'Dainichidaira Sanso', zh: '大日平山庄' },
+  '仙人池ヒュッテ・池ノ平小屋': { en: 'Senninike Hutte, Ikenotaira Goya', zh: '仙人池Hutte・池之平小屋' },
+  '内蔵助山荘': { en: 'Kuranosuke Sanso', zh: '内藏助山庄' },
+  '上高地観光施設事業（徳沢ロッヂ・上高地アルペンホテル）': { en: 'Kamikochi Tourist Facilities', zh: '上高地观光设施' },
+  '徳澤園': { en: 'Tokusawaen', zh: '德泽园' },
+  '上高地西糸屋山荘': { en: 'Nishi-Itoya Sanso', zh: '西糸屋山庄' },
+  '上高地アルプス山荘（日本山岳ガイド協会）': { en: 'Kamikochi Alps Sanso', zh: '上高地阿尔卑斯山庄' },
+  '位ヶ原山荘（乗鞍）': { en: 'Kuraigahara Sanso', zh: '位原山庄' },
+  '宝剣山荘・天狗荘・頂上山荘（宮田観光開発）': { en: 'Hoken Sanso Group', zh: '宝剑山庄集团' },
+  '木曽殿山荘': { en: 'Kisodono Sanso', zh: '木曾殿山庄' },
+  '駒峰ヒュッテ（空木岳）': { en: 'Komamine Hutte', zh: '驹峰Hutte' },
+  '西駒山荘': { en: 'Nishikoma Sanso', zh: '西驹山庄' },
+  '芦安ファンクラブ（北岳山荘・白根御池小屋）': { en: 'Ashiyasu Fan Club Huts', zh: '芦安Fan Club山庄' },
+  '長衛小屋（芦安ファンクラブ）': { en: 'Choei Goya', zh: '长卫小屋' },
+  '広河原山荘': { en: 'Hirogawara Sanso', zh: '广河原山庄' },
+  '北岳肩の小屋': { en: 'Kitadake Katanokoya', zh: '北岳肩之小屋' },
+  '薬師ヶ岳小屋・南御室小屋': { en: 'Yakushigatake Goya, Minamiomuro Goya', zh: '药师岳小屋・南御室小屋' },
+  '鳳凰小屋': { en: 'Hoo Goya', zh: '凤凰小屋' },
+  '夜叉神ヒュッテ': { en: 'Yashajin Hutte', zh: '夜叉神Hutte' },
+  '夜叉神峠小屋': { en: 'Yashajintoge Goya', zh: '夜叉神峠小屋' },
+  '七丈小屋（甲斐駒）': { en: 'Shichijo Goya', zh: '七丈小屋' },
+  '北沢峠こもれび山荘（伊那市観光）': { en: 'Kitazawatoge Komorebi Sanso', zh: '北泽峠Komorebi山庄' },
+  '仙丈小屋（伊那市観光）': { en: 'Senjo Goya', zh: '仙丈小屋' },
+  '馬の背ヒュッテ': { en: 'Umanose Hutte', zh: '马之背Hutte' },
+  '大平山荘': { en: 'Odaira Sanso', zh: '大平山庄' },
+  '仙水小屋・早川尾根小屋': { en: 'Sensui Goya, Hayakawaone Goya', zh: '仙水小屋・早川尾根小屋' },
+  '両俣小屋': { en: 'Ryomata Goya', zh: '两俣小屋' },
+  '大門沢小屋・農鳥小屋': { en: 'Daimonzawa Goya, Notori Goya', zh: '大门泽小屋・农鸟小屋' },
+  '青木鉱泉': { en: 'Aoki Kosen', zh: '青木矿泉' },
+  '仙流荘': { en: 'Senryuso', zh: '仙流庄' },
+  '塩見小屋（伊那市観光）': { en: 'Shiomi Goya', zh: '盐见小屋' },
+  '三伏峠小屋': { en: 'Sanpukutoge Goya', zh: '三伏峠小屋' },
+  '特種東海フォレスト（椹島ロッヂ・千枚・赤石・荒川・百間洞・熊の平小屋等）': { en: 'Tokai Forest Huts', zh: '东海Forest山庄' },
+  '光岳小屋': { en: 'Tekari Dake Goya', zh: '光岳小屋' },
+  '聖光小屋': { en: 'Seiko Goya', zh: '圣光小屋' },
+  '井川観光協会（聖平小屋・茶臼小屋・横窪沢小屋）': { en: 'Ikawa Tourist Assoc Huts', zh: '井川观光协会山庄' },
+  '高谷池ヒュッテ': { en: 'Koyaike Hutte', zh: '高谷池Hutte' },
+  '赤岳鉱泉・行者小屋': { en: 'Akadake Kosen, Gyojya Goya', zh: '赤岳矿泉・行者小屋' },
+  '硫黄岳山荘グループ（硫黄岳・根石岳・夏沢鉱泉）': { en: 'Iodake Sanso Group', zh: '硫黄岳山庄集团' },
+  'ふじもりグループ（赤岳天望荘・八ヶ岳山荘・美濃戸山荘・ヒュッテ夏沢）': { en: 'Fujimori Group', zh: 'Fujimori集团' },
+  '本沢温泉グループ（赤岳頂上山荘・キレット小屋・山びこ荘）': { en: 'Honzawa Onsen Group', zh: '本泽温泉集团' },
+  '青年小屋': { en: 'Seinen Goya', zh: '青年小屋' },
+  '赤岳山荘': { en: 'Akadake Sanso', zh: '赤岳山庄' },
+  '美濃戸高原やまのこ村': { en: 'Minodo Kogen Yamanokomura', zh: '美浓户高原Yamanoko村' },
+  '蓼科山荘・双子池ヒュッテ': { en: 'Tateshina Sanso, Futagoike Hutte', zh: '蓼科山庄・双子池Hutte' },
+  '蓼科山頂ヒュッテ': { en: 'Tateshina Sancho Hutte', zh: '蓼科山顶Hutte' },
+  '唐沢鉱泉': { en: 'Karasawa Kosen', zh: '唐泽矿泉' },
+  'オーレン小屋': { en: 'Oren Goya', zh: 'Oren小屋' },
+  '黒百合ヒュッテ': { en: 'Kuroyuri Hutte', zh: '黑百合Hutte' },
+  '高見石小屋': { en: 'Takamiishi Goya', zh: '高见石小屋' },
+  'しらびそ小屋': { en: 'Shirabiso Goya', zh: 'Shirabiso小屋' },
+  '北横岳ヒュッテ': { en: 'Kitayokodake Hutte', zh: '北横岳Hutte' },
+  '縞枯山荘': { en: 'Shimagare Sanso', zh: '缟枯山庄' },
+  '麦草ヒュッテ': { en: 'Mugikusa Hutte', zh: '麦草Hutte' },
+  '青苔荘': { en: 'Seitaiso', zh: '青苔庄' },
+  '白駒荘': { en: 'Shirakomaso', zh: '白驹庄' }
+};
+
+function t(text) {
+  if (currentLang === 'ja' || !text) return text;
+  if (i18n[text] && i18n[text][currentLang]) return i18n[text][currentLang];
+  
+  // Date parsing logic for partial translations
+  let res = text;
+  const rules = [
+    ['受付中', 'Now accepting', '受理中'],
+    ['宿泊日1ヶ月前', '1 month before stay', '入住日1个月前'],
+    ['2ヶ月前', '2 months before', '2个月前'],
+    ['3週間前', '3 weeks before', '3周前'],
+    ['30日前', '30 days before', '30天前'],
+    ['1年前から', '1 year before', '1年前起'],
+    ['前年', 'Prev year ', '前年'],
+    ['未定', 'TBD', '未定'],
+    ['準備中', 'Preparing', '准备中'],
+    ['予約受付未開始', 'Not started', '尚未开始'],
+    ['電話のみ', 'Phone only', '仅限电话'],
+    ['Web：', 'Web: ', '网络：'],
+    ['電話：', 'Phone: ', '电话：'],
+    ['メールフォームで受付', 'Via email form', '通过邮件表单受理'],
+    ['メール', 'Email', '邮件'],
+    ['時〜', ':00~', '点起'],
+    ['時', ':00', '点'],
+    ['〜', '~', '~'],
+    ['分は', ' stays: ', '的住宿：'],
+    ['分）', ' stays)', '的住宿）'],
+    ['以降は', 'After: ', '之后：'],
+    ['GWは別日程', 'GW dates differ', '黄金周另行安排'],
+    ['月別に3期', '3 periods by month', '按月分3期'],
+    ['期間別5期', '5 periods', '分5期'],
+    ['月別5期', '5 periods by month', '按月分5期'],
+    ['昨年実績', 'Last year', '去年记录'],
+    ['会員限定', 'Members only', '仅限会员'],
+    ['春スキー', 'Spring ski', '春季滑雪'],
+    ['夏登山期は未定', 'Summer TBD', '夏季未定'],
+    ['営業期間', 'Season: ', '营业期间：'],
+    ['宿泊分', ' stays', '住宿'],
+    ['例年6月頃発表', 'Usually announced around June', '通常6月左右公布'],
+    ['10人未満は予約不要', 'No reservation <10 ppl', '10人以下免预约'],
+    ['TEL共通', 'Shared phone', '电话通用'],
+    ['月', '/', '月'],
+    ['日', ' ', '日']
+  ];
+  for (const [ja, en, zh] of rules) {
+    res = res.replaceAll(ja, currentLang === 'en' ? en : zh);
+  }
+  return res;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.translate-btn').forEach(btn => {
+    btn.style.fontWeight = 'normal';
+    btn.style.opacity = '0.7';
+  });
+  event.target.style.fontWeight = 'bold';
+  event.target.style.opacity = '1';
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.innerHTML = t(el.getAttribute('data-i18n') ? i18n[el.getAttribute('data-i18n')][lang] || el.innerHTML : el.innerHTML);
+    if (lang === 'ja') {
+      // Revert to original text if we stored it, else hardcode mapping backwards is hard.
+      // Better to just store original in a data attribute if we want flawless swapping,
+      // but for simplicity we rely on the JS object keys.
+    }
+  });
+  
+  // Specific static translations
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (lang === 'ja') {
+       // Reverse lookup or just hardcode since it's small.
+       // Actually simpler: we know the Japanese is the key!
+       el.innerHTML = key === 'h1' ? '稜線の計画を立てやすくする、<br>山小屋予約開始日一覧' : key === 'eyebrow' ? '⛰️ SAlpineClub, 2026シーズン用' : key === 'lead' ? '北アルプスを中心に、主要な山小屋の予約開始タイミングを山域別に整理したページです。朝焼けの稜線を追うように、次の山行計画をざっと見渡せる一覧にしています。山小屋名、山域、受付方法で絞り込めるので、実用メモとしても使いやすい構成です。' : key === 'note1' ? '山行前の下調べ用, 山小屋名, 山域, 日付メモで検索' : key === 'note2' ? '稜線ごとの比較に便利, 山域別, Web受付, 電話受付で絞り込み' : key === 'note3' ? 'スマホでも見やすい, 小屋メモ帳みたいな表示に調整' : key;
+    } else {
+       if(i18n[key] && i18n[key][lang]) el.innerHTML = i18n[key][lang];
+    }
+  });
+
+  const searchInput = document.getElementById('search');
+  if (lang === 'ja') searchInput.placeholder = "山小屋名、山域、日付メモで検索。例: 穂高、剱、4/1";
+  else searchInput.placeholder = i18n['search_ph'][lang];
+
+  // Translate options
+  document.querySelectorAll('option').forEach(opt => {
+    if(!opt.dataset.ja) opt.dataset.ja = opt.textContent; // Store original
+    opt.textContent = t(opt.dataset.ja);
+  });
+
+  render();
+}
+
 const data = [
   // ===== 北ア 槍・穂高 =====
   {name:'穂高岳山荘', date:'宿泊日1ヶ月前 8時〜（4/27〜5/19分は3/27 8時〜）', area:'北ア-槍穂', method:'Web', phone:'0578-82-2150', site:'https://www.hotakadakesanso.com/reservation'},
@@ -675,10 +937,10 @@ function renderStats(filtered) {
   const visible = filtered.length;
 
   const stats = [
-    { label: '掲載件数', value: total },
-    { label: '表示中', value: visible },
-    { label: 'Web受付', value: webCount },
-    { label: '山域数', value: areaCount }
+    { label: t('掲載件数'), value: total },
+    { label: t('表示中'), value: visible },
+    { label: t('Web受付'), value: webCount },
+    { label: t('山域数'), value: areaCount }
   ];
 
   statBar.innerHTML = stats.map(stat => `
@@ -691,7 +953,7 @@ function renderStats(filtered) {
 
 function renderRows(filtered) {
   if (!filtered.length) {
-    rows.innerHTML = '<div class="empty">条件に合う山小屋が見つかりませんでした。検索語やフィルタを少しゆるめてみてください。</div>';
+    rows.innerHTML = '<div class="empty">${t("条件に合う山小屋が見つかりませんでした。検索語やフィルタを少しゆるめてみてください。")}</div>';
     return;
   }
 
@@ -699,10 +961,10 @@ function renderRows(filtered) {
     const methodClass = item.method === 'Web' ? 'web' : 'tel';
     return `
       <article class="row">
-        <div class="hut-name">${escapeHtml(item.name)}</div>
-        <div class="date">${escapeHtml(item.date)}${(item.phone || item.site) ? `<div class="row-meta">${item.phone ? `<span class="meta-chip">☎ ${escapeHtml(item.phone)}</span>` : ''}${item.site ? `<a class="meta-chip" href="${escapeHtml(item.site)}" target="_blank" rel="noopener noreferrer">予約サイト ↗</a>` : ''}</div>` : ''}</div>
-        <div class="area">${escapeHtml(item.area)}</div>
-        <div class="method"><span class="pill ${methodClass}">${escapeHtml(item.method)}</span></div>
+        <div class="hut-name">${escapeHtml(t(item.name))}</div>
+        <div class="date">${escapeHtml(t(item.date))}${(item.phone || item.site) ? `<div class="row-meta">${item.phone ? `<span class="meta-chip">☎ ${escapeHtml(item.phone)}</span>` : ''}${item.site ? `<a class="meta-chip" href="${escapeHtml(item.site)}" target="_blank" rel="noopener noreferrer">${t("予約サイト ↗")}</a>` : ''}</div>` : ''}</div>
+        <div class="area">${escapeHtml(t(item.area))}</div>
+        <div class="method"><span class="pill ${methodClass}">${escapeHtml(t(item.method))}</span></div>
       </article>
     `;
   }).join('');
@@ -763,7 +1025,7 @@ function render() {
 
   renderStats(filtered);
   renderRows(filtered);
-  count.textContent = `${filtered.length} / ${data.length} 件を表示`;
+  count.textContent = `${filtered.length} / ${data.length}  ${t("件を表示")}`;
 }
 
 search.addEventListener('input', render);
@@ -771,47 +1033,6 @@ areaFilter.addEventListener('change', render);
 sourceFilter.addEventListener('change', render);
 sortOrder.addEventListener('change', render);
 render();
-</script>
-
-<script type="text/javascript">
-function translatePage(targetLang) {
-  // If we're already on a translated page, just change the language in the cookie
-  if (window.location.hostname === 'translate.goog') {
-    document.cookie = `googtrans=/ja/${targetLang}; path=/; domain=.translate.goog`;
-    location.reload();
-    return;
-  }
-
-  // Set translation cookie for the original domain just in case
-  document.cookie = `googtrans=/ja/${targetLang}; path=/;`;
-  document.cookie = `googtrans=/ja/${targetLang}; path=/SAlpineClub/; domain=${location.hostname};`;
-  
-  // Redirect to Google Translate's proxy service
-  const currentUrl = encodeURIComponent(window.location.href);
-  window.location.href = `https://translate.google.com/translate?sl=ja&tl=${targetLang}&u=${currentUrl}`;
-}
-
-function resetLanguage() {
-  if (window.location.hostname === 'translate.goog') {
-    // If inside Google's proxy, extract the original URL and redirect back
-    const originalUrl = new URLSearchParams(window.location.search).get('u');
-    if (originalUrl) {
-      window.location.href = decodeURIComponent(originalUrl);
-      return;
-    }
-  }
-  
-  // Clear cookies and reload
-  document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/SAlpineClub/; domain=${location.hostname};`;
-  location.reload();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const isTranslated = window.location.hostname === 'translate.goog' || document.cookie.includes('googtrans=');
-  const btn = document.getElementById('reset-lang-btn');
-  if(btn) btn.style.display = isTranslated ? 'inline-flex' : 'none';
-});
 </script>
 
 </body>
